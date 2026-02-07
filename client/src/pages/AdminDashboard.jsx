@@ -33,12 +33,8 @@ export default function AdminDashboard() {
         <h2 className="text-3xl font-bold">Admin Dashboard</h2>
 
         {/* 🔗 SOS ALERTS LINK */}
-        <Link
-          to="/admin/sos-alerts"
-          className="bg-red-600 text-white px-4 py-2 rounded"
-        >
-          🚨 SOS Alerts
-        </Link>
+       
+       
       </div>
 
       {requests.length === 0 ? (
