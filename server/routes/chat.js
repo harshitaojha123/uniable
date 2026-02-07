@@ -1,42 +1,13 @@
 
 import express from "express";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const router = express.Router();
 
-router.post("/chat", async (req, res) => {
-  try {
-    const { message } = req.body;
-
-    if (!message) {
-      return res.status(400).json({ reply: "Message is required" });
-    }
-
-    // ✅ SAFETY CHECK (MOST IMPORTANT)
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(503).json({
-        reply: "AI feature is temporarily disabled (API key not configured)."
-      });
-    }
-
-    // ✅ Create Gemini instance only if key exists
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest"
-    });
-
-    const result = await model.generateContent(message);
-    const reply = result.response.text();
-
-    res.json({ reply });
-
-  } catch (error) {
-    console.error("Gemini error:", error.message);
-    res.status(500).json({
-      reply: "AI service is currently unavailable."
-    });
-  }
+// 🚫 AI DISABLED DUE TO PRICING
+router.post("/chat", (req, res) => {
+  return res.status(503).json({
+    reply: "AI Assistant is currently disabled due to API pricing limitations."
+  });
 });
 
 export default router;
