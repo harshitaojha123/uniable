@@ -1,22 +1,37 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const stored = localStorage.getItem("user");
+
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Failed to load user:", error);
+      localStorage.removeItem("user");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  const login = (data) => {
-    setUser(data);
-    localStorage.setItem("user", JSON.stringify(data));
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem(
+      "user",
+      JSON.stringify(userData)
+    );
   };
 
   const logout = () => {
@@ -24,21 +39,51 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
-  if (loading) return <div>Loading...</div>;
+  const value = {
+    user,
+    role: user?.role ?? null,
+    isAuthenticated: !!user,
+    login,
+    logout,
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+
+        <div className="flex flex-col items-center">
+
+          <div className="h-12 w-12 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
+
+          <h2 className="mt-6 text-xl font-semibold">
+            Loading UniAble...
+          </h2>
+
+          <p className="text-gray-500 mt-2">
+            Preparing your accessibility experience
+          </p>
+
+        </div>
+
+      </div>
+    );
+  }
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        role: user?.role || null,
-        isAuthenticated: !!user,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error(
+      "useAuth must be used inside AuthProvider"
+    );
+  }
+
+  return context;
+}

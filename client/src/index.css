@@ -3,7 +3,178 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Ensure Leaflet map stays below navbar */
+
+/* ---------------- GOOGLE FONT ---------------- */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* ---------------- ROOT VARIABLES ---------------- */
+
+:root {
+  --primary: #2563eb;
+  --secondary: #7c3aed;
+  --accent: #06b6d4;
+
+  --bg: #f8fafc;
+  --card: rgba(255, 255, 255, 0.75);
+
+  --text: #111827;
+  --text-light: #6b7280;
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------------- GLOBAL RESET ---------------- */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(
+      135deg,
+      #eff6ff 0%,
+      #eef2ff 45%,
+      #ffffff 100%
+    );
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---------------- SCROLLBAR ---------------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf2f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    var(--primary),
+    var(--secondary)
+  );
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}
+
+/* ---------------- GLASS CARD ---------------- */
+
+.glass {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,.4);
+
+  box-shadow: var(--shadow);
+
+  border-radius: 20px;
+}
+
+/* ---------------- BUTTON ---------------- */
+
+.btn-primary {
+  @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+  background: linear-gradient(135deg,#2563eb,#7c3aed);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 30px rgba(37,99,235,.3);
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-xl font-semibold border transition-all duration-300;
+  border-color: #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+}
+
+/* ---------------- INPUT ---------------- */
+
+.input {
+  @apply w-full rounded-xl border px-4 py-3 outline-none transition;
+  border-color: #d1d5db;
+}
+
+.input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* ---------------- CARD ---------------- */
+
+.card {
+  background: white;
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  transition: .35s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+/* ---------------- ANIMATIONS ---------------- */
+
+.fade-up {
+  animation: fadeUp .7s ease;
+}
+
+@keyframes fadeUp {
+
+  from{
+    opacity:0;
+    transform:translateY(40px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+.float {
+  animation: floating 4s ease-in-out infinite;
+}
+
+@keyframes floating {
+
+0%,100%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-12px);
+}
+
+}
+
+/* ---------------- LEAFLET ---------------- */
+
 .leaflet-container {
   z-index: 0 !important;
 }
@@ -12,4 +183,43 @@
 .leaflet-top,
 .leaflet-bottom {
   z-index: 0 !important;
+}
+
+/* ---------------- SELECTION ---------------- */
+
+::selection{
+background:#2563eb;
+color:white;
+}
+
+/* ---------------- IMAGES ---------------- */
+
+img{
+max-width:100%;
+display:block;
+}
+
+/* ---------------- LINKS ---------------- */
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+/* ---------------- SECTION ---------------- */
+
+section{
+padding:80px 0;
+}
+
+/* ---------------- CONTAINER ---------------- */
+
+.container-custom{
+width:min(1200px,92%);
+margin:auto;
+}
+@keyframes shimmer {
+  100% {
+    transform: translateX(250%);
+  }
 }

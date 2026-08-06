@@ -2,145 +2,138 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
 import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Accessibility from "./pages/Accessibility";
 import Help from "./pages/Help";
-import AdminDashboard from "./pages/AdminDashboard";
 import CampusAccessibility from "./pages/CampusAccessibility";
-import AdminCampus from "./pages/AdminCampus";
 import Ai from "./pages/Ai";
+
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminCampus from "./pages/AdminCampus";
 import SOSAlerts from "./pages/SOSAlerts";
 
+/* ---------------- Protected Routes ---------------- */
 
-
-
-
-export default function App() {
+function StudentRoute({ children }) {
   const { user, role } = useAuth();
-  function AdminRoute({ children }) {
-  const { user } = useAuth();
 
-  if (!user || user.role !== "admin") {
-    return <Navigate to="/login" />;
+  if (!user || role !== "student") {
+    return <Navigate to="/login" replace />;
   }
 
   return children;
 }
 
+function AdminRoute({ children }) {
+  const { user, role } = useAuth();
 
+  if (!user || role !== "admin") {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
+/* ---------------- App ---------------- */
+
+export default function App() {
   return (
-    <>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
-      <Routes>
-        {/* PUBLIC */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+      <main className="pt-24">
+        <Routes>
 
-        {/* STUDENT */}
-        <Route
-          path="/dash"
-          element={
-            user && role === "student" ? (
-              <Dashboard />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route
-  path="/admin/sos-alerts"
-  element={
-    <AdminRoute>
-      <SOSAlerts />
-    </AdminRoute>
-  }
-/>
+          {/* ---------- Public ---------- */}
 
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/access"
-          element={
-            user && role === "student" ? (
-              <Accessibility />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+          {/* ---------- Student ---------- */}
 
-        <Route
-          path="/help"
-          element={
-            user && role === "student" ? (
-              <Help />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+          <Route
+            path="/dash"
+            element={
+              <StudentRoute>
+                <Dashboard />
+              </StudentRoute>
+            }
+          />
 
-        <Route
-          path="/campus"
-          element={
-            user && role === "student" ? (
-              <CampusAccessibility />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+          <Route
+            path="/access"
+            element={
+              <StudentRoute>
+                <Accessibility />
+              </StudentRoute>
+            }
+          />
 
-        {/* ADMIN */}
-        <Route
-          path="/admin"
-          element={
-            user && role === "admin" ? (
-              <AdminDashboard />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+          <Route
+            path="/help"
+            element={
+              <StudentRoute>
+                <Help />
+              </StudentRoute>
+            }
+          />
 
-        <Route
-          path="/admin/campus"
-          element={
-            user && role === "admin" ? (
-              <AdminCampus />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+          <Route
+            path="/campus"
+            element={
+              <StudentRoute>
+                <CampusAccessibility />
+              </StudentRoute>
+            }
+          />
 
-        {/* FALLBACK */}
-        <Route path="*" element={<Navigate to="/" />} />
+          <Route
+            path="/ai"
+            element={
+              <StudentRoute>
+                <Ai />
+              </StudentRoute>
+            }
+          />
 
-        <Route
-  path="/ai"
-  element={
-    user && role === "student" ? (
-      <Ai />
-    ) : (
-      <Navigate to="/login" />
-    )
-  }
-/>
+          {/* ---------- Admin ---------- */}
 
-<Route
-  path="/campus"
-  element={
-    user && role === "student" ? (
-      <CampusAccessibility />
-    ) : (
-      <Navigate to="/login" />
-    )
-  }
-/>
-      </Routes>
-    </>
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/campus"
+            element={
+              <AdminRoute>
+                <AdminCampus />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/sos-alerts"
+            element={
+              <AdminRoute>
+                <SOSAlerts />
+              </AdminRoute>
+            }
+          />
+
+          {/* ---------- Fallback ---------- */}
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+        </Routes>
+      </main>
+    </div>
   );
 }

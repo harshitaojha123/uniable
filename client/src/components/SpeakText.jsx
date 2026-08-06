@@ -1,30 +1,72 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Volume2,
+  Square,
+  Loader2,
+} from "lucide-react";
+
 export default function SpeakText({ text }) {
+  const [speaking, setSpeaking] = useState(false);
+
   const speak = () => {
-    if (!text) {
-      alert("No text to speak");
+    if (!text?.trim()) {
+      alert("No text available to speak.");
       return;
     }
 
-    // Stop any ongoing speech
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
 
-    // Optional settings (safe defaults)
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
 
+    utterance.onstart = () => setSpeaking(true);
+    utterance.onend = () => setSpeaking(false);
+
     window.speechSynthesis.speak(utterance);
   };
 
+  const stop = () => {
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+  };
+
   return (
-    <button
-      onClick={speak}
-      className="rounded bg-green-600 px-3 py-1 text-white hover:bg-green-700"
+    <motion.div
+      whileHover={{ y: -2 }}
+      className="flex items-center gap-3"
     >
-      🔊 Speak
-    </button>
+      {!speaking ? (
+        <button
+          onClick={speak}
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3 text-white font-semibold shadow-lg hover:scale-105 transition"
+        >
+          <Volume2 size={18} />
+          Speak
+        </button>
+      ) : (
+        <>
+          <button
+            disabled
+            className="flex items-center gap-2 rounded-xl bg-green-500 px-5 py-3 text-white font-semibold"
+          >
+            <Loader2 size={18} className="animate-spin" />
+            Speaking...
+          </button>
+
+          <button
+            onClick={stop}
+            className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-white font-semibold hover:bg-red-700 transition"
+          >
+            <Square size={18} />
+            Stop
+          </button>
+        </>
+      )}
+    </motion.div>
   );
 }
