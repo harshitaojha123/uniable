@@ -1,11 +1,12 @@
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   MapPinned,
   Search,
-  Filter,
   Accessibility,
   Map,
+  Filter,
 } from "lucide-react";
 
 import CampusMap from "../components/map/CampusMap";
@@ -24,167 +25,196 @@ export default function CampusAccessibility() {
     "general",
   ]);
 
+  // Load saved accessibility reports.
   useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("campusLocations")) || [];
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem("campusLocations") || "[]"
+      );
 
-    setLocations(stored);
+      setLocations(Array.isArray(stored) ? stored : []);
+    } catch (error) {
+      console.error("Unable to load campus reports:", error);
+      setLocations([]);
+    }
   }, []);
 
+  // Apply category filters and search.
   const filteredLocations = locations.filter((loc) => {
-    const matchType = filters.includes(loc.type);
+    const matchesType = filters.includes(loc.type);
+    const query = search.trim().toLowerCase();
 
-    const matchSearch =
-      !search ||
-      loc.name?.toLowerCase().includes(search.toLowerCase()) ||
-      loc.description?.toLowerCase().includes(search.toLowerCase());
+    const place = (loc.place || loc.name || "").toLowerCase();
+    const description = (loc.description || "").toLowerCase();
 
-    return matchType && matchSearch;
+    const matchesSearch =
+      !query ||
+      place.includes(query) ||
+      description.includes(query);
+
+    return matchesType && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-
-      <div className="max-w-7xl mx-auto px-6 py-10">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
         {/* Hero */}
-
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white p-10 shadow-2xl"
+          className="rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white p-6 sm:p-10 shadow-xl"
         >
+          <div className="flex flex-wrap items-center gap-5">
+            <MapPinned size={42} />
 
-          <div className="flex flex-wrap justify-between items-center gap-6">
+            <div className="flex-1">
+              <h1 className="text-3xl sm:text-4xl font-black">
+                Campus Accessibility
+              </h1>
 
-            <div>
-
-              <div className="flex items-center gap-4">
-
-                <MapPinned size={42} />
-
-                <h1 className="text-5xl font-black">
-                  Campus Accessibility
-                </h1>
-
-              </div>
-
-              <p className="mt-5 text-lg text-blue-100 max-w-3xl leading-8">
-                Explore accessible locations, ramps, elevators,
-                classrooms and facilities across your campus.
+              <p className="mt-3 text-blue-100 leading-relaxed">
+                Discover accessible facilities and report barriers
+                to help create a more inclusive campus.
               </p>
-
             </div>
 
-            <div className="hidden lg:flex w-24 h-24 rounded-3xl bg-white/20 backdrop-blur-lg items-center justify-center">
-              <Accessibility size={50} />
-            </div>
+            <Accessibility
+              size={48}
+              className="hidden sm:block"
+            />
+          </div>
+        </motion.section>
 
+        {/* Report summary */}
+        <section className="grid sm:grid-cols-2 gap-4">
+          <div className="rounded-2xl bg-white p-5 shadow-md">
+            <p className="text-gray-500">Total Reports</p>
+            <p className="text-3xl font-bold mt-1">
+              {locations.length}
+            </p>
           </div>
 
-        </motion.div>
+          <div className="rounded-2xl bg-white p-5 shadow-md">
+            <p className="text-gray-500">Matching Reports</p>
+            <p className="text-3xl font-bold mt-1">
+              {filteredLocations.length}
+            </p>
+          </div>
+        </section>
 
         {/* Search */}
+        <section className="rounded-2xl bg-white p-5 shadow-md">
+          <label
+            htmlFor="campus-search"
+            className="flex items-center gap-3"
+          >
+            <Search className="text-blue-600 shrink-0" />
 
-        <div className="grid lg:grid-cols-3 gap-6 mt-10">
+            <input
+              id="campus-search"
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search locations or accessibility issues..."
+              className="w-full outline-none p-2"
+            />
+          </label>
+        </section>
 
-          <div className="lg:col-span-2">
-
-            <div className="bg-white rounded-2xl shadow-lg p-4 flex items-center gap-3">
-
-              <Search className="text-gray-400" />
-
-              <input
-                className="flex-1 outline-none"
-                placeholder="Search locations..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-
-            </div>
-
-          </div>
-
-          <div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-4 flex items-center gap-3">
-
-              <Filter className="text-blue-600" />
-
-              <span className="font-semibold">
-                Filter Accessibility Types
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Filters */}
-
-        <div className="mt-8 bg-white rounded-3xl shadow-lg p-6">
+        {/* Category filters */}
+        <section className="rounded-3xl bg-white p-5 sm:p-6 shadow-md">
+          <h2 className="text-xl font-bold mb-5 flex items-center gap-2">
+            <Filter className="text-blue-600" />
+            Filter Accessibility Categories
+          </h2>
 
           <MapFilters
             filters={filters}
             setFilters={setFilters}
           />
+        </section>
 
-        </div>
-
-        {/* Map */}
-
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className="mt-8 rounded-3xl overflow-hidden shadow-2xl bg-white"
-        >
-
-          <div className="flex items-center justify-between border-b p-6">
-
-            <div className="flex items-center gap-3">
-
+        {/* Interactive map */}
+        <section className="overflow-hidden rounded-3xl bg-white shadow-xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b p-5">
+            <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
               <Map className="text-blue-600" />
+              Interactive Campus Map
+            </h2>
 
-              <h2 className="text-2xl font-bold">
-                Interactive Campus Map
-              </h2>
-
-            </div>
-
-            <span className="rounded-full bg-blue-100 px-4 py-2 text-blue-700 font-semibold">
-              {filteredLocations.length} Locations
+            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+              {filteredLocations.length} locations
             </span>
-
           </div>
 
           <CampusMap
             locations={filteredLocations}
             onMapClick={setSelectedPos}
           />
+        </section>
 
-        </motion.div>
+        {/* Add a report */}
+        <section>
+          <AddLocationForm
+            setLocations={setLocations}
+            selectedPos={selectedPos}
+          />
+        </section>
 
-        {/* Add Location */}
+        {/* Report list */}
+        <section className="rounded-3xl bg-white p-5 sm:p-6 shadow-lg">
+          <h2 className="text-xl font-bold mb-5">
+            Accessibility Reports
+          </h2>
 
-        <div className="mt-10">
+          {filteredLocations.length === 0 ? (
+            <p className="text-gray-500">
+              No reports match your current search and filters.
+              Try changing your search or selecting more categories.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {filteredLocations.map((loc) => (
+                <article
+                  key={loc.id}
+                  className="rounded-xl border border-gray-200 p-4"
+                >
+                  <div className="flex flex-wrap justify-between gap-3">
+                    <h3 className="text-lg font-bold">
+                      {loc.place || loc.name || "Unnamed location"}
+                    </h3>
 
-          <div className="bg-white rounded-3xl shadow-lg p-8">
+                    <span
+                      className={`rounded-full px-3 py-1 text-sm font-medium ${
+                        loc.resolved
+                          ? "bg-green-100 text-green-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {loc.resolved ? "Resolved" : "Pending"}
+                    </span>
+                  </div>
 
-            <h2 className="text-2xl font-bold mb-6">
-              Add New Accessible Location
-            </h2>
+                  <p className="mt-2 text-gray-600">
+                    {loc.description}
+                  </p>
 
-            <AddLocationForm
-              setLocations={setLocations}
-              selectedPos={selectedPos}
-            />
+                  <p className="mt-2 text-sm text-gray-500 capitalize">
+                    Category: {loc.type}
+                  </p>
 
-          </div>
-
-        </div>
-
+                  {loc.createdAt && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Reported: {loc.createdAt}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
-
-    </div>
+    </main>
   );
 }

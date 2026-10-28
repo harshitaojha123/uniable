@@ -1,9 +1,11 @@
+
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Accessibility,
   LayoutDashboard,
   Map,
+  MapPinned,
   Bot,
   HelpCircle,
   ShieldAlert,
@@ -37,7 +39,6 @@ export default function Navbar() {
           <div className="h-11 w-11 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg">
             ♿
           </div>
-
           <span>UniAble</span>
         </Link>
 
@@ -88,6 +89,11 @@ export default function Navbar() {
                 Admin
               </NavLink>
 
+              <NavLink to="/admin/campus" className={navStyle}>
+                <MapPinned size={18} />
+                Campus Map
+              </NavLink>
+
               <NavLink to="/admin/sos-alerts" className={navStyle}>
                 <ShieldAlert size={18} />
                 SOS Alerts
@@ -98,16 +104,15 @@ export default function Navbar() {
           {isAuthenticated && (
             <div className="flex items-center gap-4 ml-5 border-l border-gray-300 pl-5">
               <img
-                src={user.avatar}
+                src={user?.avatar}
                 alt="avatar"
                 className="h-11 w-11 rounded-full border-2 border-blue-500 shadow-md"
               />
 
               <div className="hidden lg:block">
                 <h3 className="font-semibold text-gray-800">
-                  {user.name || "User"}
+                  {user?.name || "User"}
                 </h3>
-
                 <p className="text-xs text-gray-500 capitalize">{role}</p>
               </div>
 

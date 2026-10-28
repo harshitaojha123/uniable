@@ -1,8 +1,17 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
-import L from "leaflet";
 
-// Fix marker icon issue
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix default Leaflet marker icons in Vite.
 delete L.Icon.Default.prototype._getIconUrl;
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -12,53 +21,90 @@ L.Icon.Default.mergeOptions({
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// Component to detect map click
+// Capture coordinates when the user clicks the map.
 function ClickHandler({ onMapClick }) {
   useMapEvents({
-    click(e) {
-      onMapClick({
-        lat: e.latlng.lat,
-        lng: e.latlng.lng,
-      });
+    click(event) {
+      if (typeof onMapClick === "function") {
+        onMapClick({
+          lat: event.latlng.lat,
+          lng: event.latlng.lng,
+        });
+      }
     },
   });
+
   return null;
 }
 
-export default function CampusMap({ locations, onMapClick }) {
+export default function CampusMap({
+  locations = [],
+  onMapClick,
+}) {
+  const validLocations = locations.filter(
+    (loc) =>
+      loc.lat != null &&
+      loc.lng != null &&
+      Number.isFinite(Number(loc.lat)) &&
+      Number.isFinite(Number(loc.lng))
+  );
+
   return (
     <div className="mb-6">
-      <h3 className="font-semibold mb-2">Campus Accessibility Map</h3>
+      <h3 className="font-semibold text-lg mb-3">
+        Campus Accessibility Map
+      </h3>
 
       <MapContainer
-       center={[26.502166, 80.274699]}
- // example campus center
-       zoom={18}                    // 👈 campus-level clarity
-  minZoom={17}
-  maxZoom={20}
-        className="h-96 w-full rounded"
+        center={[26.502166, 80.274699]}
+        zoom={17}
+        minZoom={3}
+        maxZoom={20}
+        scrollWheelZoom={true}
+        className="h-96 w-full rounded-xl z-0"
       >
         <TileLayer
-          attribution="© OpenStreetMap"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
         <ClickHandler onMapClick={onMapClick} />
 
-        {locations.map((loc) => (
-          <Marker key={loc.id} position={[loc.lat, loc.lng]}>
+        {validLocations.map((loc) => (
+          <Marker
+            key={loc.id}
+            position={[
+              Number(loc.lat),
+              Number(loc.lng),
+            ]}
+          >
             <Popup>
-              <strong>{loc.place}</strong>
-              <br />
-              {loc.description}
-              <br />
-              <span className="text-sm text-gray-600">
-                Type: {loc.type}
-              </span>
+              <div className="min-w-40">
+                <strong>
+                  {loc.place || loc.name || "Campus location"}
+                </strong>
+
+                <p className="mt-1">
+                  {loc.description || "No description provided"}
+                </p>
+
+                <p className="text-sm">
+                  Type: {loc.type || "General"}
+                </p>
+
+                <p className="text-sm">
+                  Status: {loc.resolved ? "Resolved" : "Pending"}
+                </p>
+              </div>
             </Popup>
           </Marker>
         ))}
       </MapContainer>
+
+      <p className="mt-3 text-sm text-gray-600">
+        Click the map to select a location for a new accessibility
+        report. Click an existing marker to view its details.
+      </p>
     </div>
   );
 }

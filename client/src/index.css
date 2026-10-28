@@ -1,15 +1,13 @@
 
+/* ---------------- GOOGLE FONT ---------------- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
+/* ---------------- TAILWIND ---------------- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---------------- GOOGLE FONT ---------------- */
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
 /* ---------------- ROOT VARIABLES ---------------- */
-
 :root {
   --primary: #2563eb;
   --secondary: #7c3aed;
@@ -29,7 +27,6 @@
 }
 
 /* ---------------- GLOBAL RESET ---------------- */
-
 * {
   margin: 0;
   padding: 0;
@@ -43,18 +40,17 @@ html {
 body {
   font-family: "Inter", sans-serif;
   background: linear-gradient(
-      135deg,
-      #eff6ff 0%,
-      #eef2ff 45%,
-      #ffffff 100%
-    );
+    135deg,
+    #eff6ff 0%,
+    #eef2ff 45%,
+    #ffffff 100%
+  );
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 /* ---------------- SCROLLBAR ---------------- */
-
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -77,30 +73,25 @@ body {
 }
 
 /* ---------------- GLASS CARD ---------------- */
-
 .glass {
-  background: rgba(255,255,255,0.75);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
-  border: 1px solid rgba(255,255,255,.4);
-
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: var(--shadow);
-
   border-radius: 20px;
 }
 
 /* ---------------- BUTTON ---------------- */
-
 .btn-primary {
   @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-  background: linear-gradient(135deg,#2563eb,#7c3aed);
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 30px rgba(37,99,235,.3);
+  box-shadow: 0 18px 30px rgba(37, 99, 235, 0.3);
 }
 
 .btn-secondary {
@@ -113,7 +104,6 @@ body {
 }
 
 /* ---------------- INPUT ---------------- */
-
 .input {
   @apply w-full rounded-xl border px-4 py-3 outline-none transition;
   border-color: #d1d5db;
@@ -121,16 +111,15 @@ body {
 
 .input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
 /* ---------------- CARD ---------------- */
-
 .card {
   background: white;
   border-radius: 22px;
   box-shadow: var(--shadow);
-  transition: .35s;
+  transition: 0.35s;
 }
 
 .card:hover {
@@ -138,23 +127,20 @@ body {
 }
 
 /* ---------------- ANIMATIONS ---------------- */
-
 .fade-up {
-  animation: fadeUp .7s ease;
+  animation: fadeUp 0.7s ease;
 }
 
 @keyframes fadeUp {
-
-  from{
-    opacity:0;
-    transform:translateY(40px);
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
 
-  to{
-    opacity:1;
-    transform:translateY(0);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-
 }
 
 .float {
@@ -162,19 +148,23 @@ body {
 }
 
 @keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
 
-0%,100%{
-transform:translateY(0px);
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
-50%{
-transform:translateY(-12px);
-}
-
+@keyframes shimmer {
+  100% {
+    transform: translateX(250%);
+  }
 }
 
 /* ---------------- LEAFLET ---------------- */
-
 .leaflet-container {
   z-index: 0 !important;
 }
@@ -186,40 +176,30 @@ transform:translateY(-12px);
 }
 
 /* ---------------- SELECTION ---------------- */
-
-::selection{
-background:#2563eb;
-color:white;
+::selection {
+  background: #2563eb;
+  color: white;
 }
 
 /* ---------------- IMAGES ---------------- */
-
-img{
-max-width:100%;
-display:block;
+img {
+  max-width: 100%;
+  display: block;
 }
 
 /* ---------------- LINKS ---------------- */
-
-a{
-text-decoration:none;
-color:inherit;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 /* ---------------- SECTION ---------------- */
-
-section{
-padding:80px 0;
+section {
+  padding: 80px 0;
 }
 
 /* ---------------- CONTAINER ---------------- */
-
-.container-custom{
-width:min(1200px,92%);
-margin:auto;
-}
-@keyframes shimmer {
-  100% {
-    transform: translateX(250%);
-  }
+.container-custom {
+  width: min(1200px, 92%);
+  margin: auto;
 }

@@ -40,13 +40,7 @@ export default function DisabilitySelector() {
       icon: Brain,
       color: "from-purple-500 to-indigo-500",
     },
-    {
-      id: "none",
-      label: "Prefer not to say",
-      desc: "Continue without selecting a specific accessibility need.",
-      icon: HeartHandshake,
-      color: "from-gray-500 to-slate-600",
-    },
+    
   ];
 
   return (
