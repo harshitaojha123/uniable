@@ -1,28 +1,39 @@
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import db from "./db.js";
 import chatRoutes from "./routes/chat.js";
+import openaiRoutes from "./routes/openaiRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// CORS Configuration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  })
+);
 
-// Gemini Chat Route
+// Middleware
+app.use(express.json({ limit: "20kb" }));
+
+// Existing Gemini Chat Route
 app.use("/api", chatRoutes);
+
+// New OpenAI Chat Route
+app.use("/api/openai", openaiRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
   res.send("UniAble Backend is running");
 });
 
-// Login, Help, Admin APIs (keep as-is)
-// ...
+// Server
+const PORT = process.env.PORT || 5000;
 
-const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
